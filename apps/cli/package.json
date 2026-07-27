@@ -1,0 +1,35 @@
+{
+  "name": "@caelis/cli",
+  "version": "0.0.0",
+  "type": "module",
+  "bin": {
+    "caelis": "./dist/index.js"
+  },
+  "exports": {
+    ".": {
+      "development": "./src/index.ts",
+      "types": "./src/index.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "types": "./src/index.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --dts --sourcemap --clean",
+    "dev": "tsx --conditions=development src/index.ts",
+    "test": "vitest run",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist coverage"
+  },
+  "dependencies": {
+    "@caelis/codex": "workspace:*",
+    "@caelis/config": "workspace:*",
+    "@caelis/project-index": "workspace:*",
+    "commander": "^14.0.2",
+    "pino": "^10.1.0"
+  }
+}

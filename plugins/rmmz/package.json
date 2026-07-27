@@ -1,0 +1,27 @@
+{
+  "name": "@caelis/rmmz-bridge",
+  "version": "0.0.0",
+  "type": "module",
+  "exports": {
+    ".": {
+      "development": "./src/CaelisBridge.ts",
+      "types": "./src/CaelisBridge.ts",
+      "import": "./dist/CaelisBridge.js"
+    }
+  },
+  "types": "./src/CaelisBridge.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup --config tsup.config.ts",
+    "test": "vitest run",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist coverage"
+  },
+  "devDependencies": {
+    "tsup": "^8.5.1"
+  }
+}
