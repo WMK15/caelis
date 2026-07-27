@@ -1,13 +1,15 @@
-# Caelis
+<h1 align="center">Caelis</h1>
 
-[![CI](https://github.com/WMK15/caelis/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/WMK15/caelis/actions/workflows/ci.yml?query=branch%3Amain)
-[![Node.js 24 LTS](https://img.shields.io/badge/Node.js-24%20LTS-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
-[![pnpm workspace](https://img.shields.io/badge/pnpm-workspace-F69220?logo=pnpm&logoColor=white)](https://pnpm.io/workspaces)
-[![TypeScript strict](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Model Context Protocol compatible](https://img.shields.io/badge/Model%20Context%20Protocol-compatible-000000)](https://modelcontextprotocol.io/)
-[![RPG Maker MZ](https://img.shields.io/badge/RPG%20Maker-MZ-8A2BE2)](https://www.rpgmakerweb.com/products/rpg-maker-mz)
-[![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](LICENSE)
-[![Project status](https://img.shields.io/badge/status-early%20development-yellow)](#project-status)
+<p align="center">
+  <a href="https://github.com/WMK15/caelis/actions/workflows/ci.yml?query=branch%3Amain"><img alt="CI" src="https://github.com/WMK15/caelis/actions/workflows/ci.yml/badge.svg?branch=main"></a>
+  <a href="https://nodejs.org/"><img alt="Node.js 24 LTS" src="https://img.shields.io/badge/Node.js-24%20LTS-339933?logo=node.js&logoColor=white"></a>
+  <a href="https://pnpm.io/workspaces"><img alt="pnpm workspace" src="https://img.shields.io/badge/pnpm-workspace-F69220?logo=pnpm&logoColor=white"></a>
+  <a href="https://www.typescriptlang.org/"><img alt="TypeScript strict" src="https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white"></a>
+  <a href="https://modelcontextprotocol.io/"><img alt="Model Context Protocol compatible" src="https://img.shields.io/badge/Model%20Context%20Protocol-compatible-000000"></a>
+  <a href="https://www.rpgmakerweb.com/products/rpg-maker-mz"><img alt="RPG Maker MZ" src="https://img.shields.io/badge/RPG%20Maker-MZ-8A2BE2"></a>
+  <a href="LICENSE"><img alt="License: Apache-2.0" src="https://img.shields.io/badge/License-Apache--2.0-blue.svg"></a>
+  <a href="#project-status"><img alt="Project status" src="https://img.shields.io/badge/status-early%20development-yellow"></a>
+</p>
 
 Caelis is a local-first development intelligence and automation toolkit for RPG Maker MZ. It gives MCP-compatible coding agents a safe, structured understanding of a game project and provides tools for project inspection, event generation, database automation, plugin integration, memory, validation, and playtest communication.
 
