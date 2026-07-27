@@ -1,6 +1,6 @@
 # Caelis
 
-[![CI](https://github.com/WMK15/caelis/actions/workflows/ci.yml/badge.svg)](https://github.com/WMK15/caelis/actions/workflows/ci.yml)
+[![CI](https://github.com/WMK15/caelis/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/WMK15/caelis/actions/workflows/ci.yml?query=branch%3Amain)
 [![Node.js 24 LTS](https://img.shields.io/badge/Node.js-24%20LTS-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
 [![pnpm workspace](https://img.shields.io/badge/pnpm-workspace-F69220?logo=pnpm&logoColor=white)](https://pnpm.io/workspaces)
 [![TypeScript strict](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
