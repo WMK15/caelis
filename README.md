@@ -8,7 +8,6 @@
 [![RPG Maker MZ](https://img.shields.io/badge/RPG%20Maker-MZ-8A2BE2)](https://www.rpgmakerweb.com/products/rpg-maker-mz)
 [![License](https://img.shields.io/github/license/WMK15/caelis)](LICENSE)
 [![Project status](https://img.shields.io/badge/status-early%20development-yellow)](#project-status)
-[![Contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
 Caelis is a local-first development intelligence and automation toolkit for RPG Maker MZ. It gives MCP-compatible coding agents a safe, structured understanding of a game project and provides tools for project inspection, event generation, database automation, plugin integration, memory, validation, and playtest communication.
 
@@ -163,10 +162,6 @@ See `docs/codex.md` for the Codex architecture and recovery model.
 8. Desktop Hub.
 
 See `docs/roadmap.md` for details.
-
-## Contributing
-
-Read `CONTRIBUTING.md`, keep APIs typed and documented, add tests for behavior, and run `pnpm check` before opening a pull request.
 
 ## License
 
