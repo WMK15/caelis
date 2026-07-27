@@ -1,6 +1,18 @@
 # Caelis
 
+[![CI](https://github.com/WMK15/caelis/actions/workflows/ci.yml/badge.svg)](https://github.com/WMK15/caelis/actions/workflows/ci.yml)
+[![Node.js 24 LTS](https://img.shields.io/badge/Node.js-24%20LTS-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
+[![pnpm workspace](https://img.shields.io/badge/pnpm-workspace-F69220?logo=pnpm&logoColor=white)](https://pnpm.io/workspaces)
+[![TypeScript strict](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Model Context Protocol compatible](https://img.shields.io/badge/Model%20Context%20Protocol-compatible-000000)](https://modelcontextprotocol.io/)
+[![RPG Maker MZ](https://img.shields.io/badge/RPG%20Maker-MZ-8A2BE2)](https://www.rpgmakerweb.com/products/rpg-maker-mz)
+[![License](https://img.shields.io/github/license/WMK15/caelis)](LICENSE)
+[![Project status](https://img.shields.io/badge/status-early%20development-yellow)](#project-status)
+[![Contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)](CONTRIBUTING.md)
+
 Caelis is a local-first development intelligence and automation toolkit for RPG Maker MZ. It gives MCP-compatible coding agents a safe, structured understanding of a game project and provides tools for project inspection, event generation, database automation, plugin integration, memory, validation, and playtest communication.
+
+<a id="project-status"></a>
 
 ## Status
 
