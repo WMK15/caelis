@@ -5,6 +5,15 @@ import { z } from "zod";
 import { getCodexEntity } from "./tools/codex-get-entity.js";
 import { searchCodex } from "./tools/codex-search.js";
 import { getCodexStatus } from "./tools/codex-status.js";
+import {
+  actorCreatePlanShape,
+  actorCreatePlanTool,
+  changeApplyShape,
+  changeApplyTool,
+  changePlanGetShape,
+  changePlanGetTool,
+  toJsonToolResponse
+} from "./tools/change-plan-tools.js";
 import { getProjectScan } from "./tools/project-scan.js";
 import { getProjectSummary } from "./tools/project-summary.js";
 import { getValidationReport } from "./tools/validation-report.js";
@@ -151,6 +160,35 @@ export function createCaelisMcpServer(): McpServer {
     })
   );
 
+  server.registerTool(
+    "actor_create_plan",
+    {
+      description:
+        "Plan a safe RPG Maker MZ actor creation without modifying project files.",
+      inputSchema: actorCreatePlanShape
+    },
+    async (input) => toJsonToolResponse(await actorCreatePlanTool(input))
+  );
+
+  server.registerTool(
+    "change_plan_get",
+    {
+      description: "Read a persisted Caelis change plan without applying it.",
+      inputSchema: changePlanGetShape
+    },
+    async (input) => toJsonToolResponse(await changePlanGetTool(input))
+  );
+
+  server.registerTool(
+    "change_apply",
+    {
+      description:
+        "Apply a previously reviewed Caelis change plan with explicit confirmation, backup, validation, and rollback.",
+      inputSchema: changeApplyShape
+    },
+    async (input) => toJsonToolResponse(await changeApplyTool(input))
+  );
+
   server.registerResource(
     "about",
     "caelis://about",
@@ -175,7 +213,7 @@ export function createCaelisMcpServer(): McpServer {
         {
           uri: uri.href,
           mimeType: "text/markdown",
-          text: "# Caelis Architecture\n\nThe initial MCP server exposes read-only project scan, summary, and validation tools over stdio."
+          text: "# Caelis Architecture\n\nThe MCP server exposes read-only inspection tools, planning tools that persist proposed changes without writing RPG Maker data, and explicit mutating apply tools that require a reviewed plan ID and confirmation. Actor creation follows this workflow: call actor_create_plan, review change_plan_get, then call change_apply with confirm: true."
         }
       ]
     })

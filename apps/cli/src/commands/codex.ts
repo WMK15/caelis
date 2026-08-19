@@ -1,6 +1,7 @@
 import path from "node:path";
 
 import { getCodexDatabasePath, SqliteCodexRepository } from "@caelis/codex";
+import { logger } from "@caelis/shared";
 import type { Command } from "commander";
 
 interface JsonOption {
@@ -133,7 +134,10 @@ async function openRepository(
   projectPath: string
 ): Promise<SqliteCodexRepository> {
   const projectRoot = path.resolve(projectPath);
-  const repository = new SqliteCodexRepository({ projectRoot });
+  const repository = new SqliteCodexRepository({
+    projectRoot,
+    logger
+  });
   await repository.initialize();
   return repository;
 }

@@ -65,7 +65,7 @@ async function runDoctor(projectRoot: string): Promise<DoctorCheck[]> {
     ok: detected,
     message: detected
       ? "RPG Maker MZ project file found"
-      : "Game.rmmzproject not found"
+      : ".rmmzproject project marker not found"
   });
 
   checks.push({

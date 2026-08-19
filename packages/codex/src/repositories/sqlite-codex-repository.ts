@@ -1,4 +1,5 @@
 import { and, eq, like, or } from "drizzle-orm";
+import type pino from "pino";
 
 import { createLogger } from "@caelis/shared";
 
@@ -43,7 +44,7 @@ import type {
 import {
   countSearchDocuments,
   indexSearchDocument,
-  rebuildCodexSearchIndex,
+  rebuildCodexSearchIndexWithLogger,
   searchCodexIndex,
   verifySearchDocuments
 } from "../search/fts-index.js";
@@ -79,12 +80,11 @@ import {
 } from "../database/schema.js";
 import type { CodexRepository } from "./codex-repository.js";
 
-const log = createLogger("codex:sqlite");
-
 export interface SqliteCodexRepositoryOptions {
   projectRoot: string;
   projectName?: string;
   engine?: "RPG_MAKER_MZ";
+  logger?: pino.Logger;
 }
 
 export interface CodexStatus {
@@ -109,22 +109,38 @@ export interface CodexVerificationReport {
 /** SQLite-backed production Codex repository. */
 export class SqliteCodexRepository implements CodexRepository {
   private connection: CodexConnection | undefined;
+  private readonly log: pino.Logger;
+  private readonly migrationLog: pino.Logger;
+  private readonly ftsLog: pino.Logger;
 
-  public constructor(private readonly options: SqliteCodexRepositoryOptions) {}
+  public constructor(private readonly options: SqliteCodexRepositoryOptions) {
+    this.log =
+      options.logger?.child({ component: "codex:sqlite" }) ??
+      createLogger("codex:sqlite");
+    this.migrationLog =
+      options.logger?.child({ component: "codex:migrations" }) ??
+      createLogger("codex:migrations");
+    this.ftsLog =
+      options.logger?.child({ component: "codex:fts" }) ??
+      createLogger("codex:fts");
+  }
 
   public async initialize(): Promise<void> {
-    log.info(
+    this.log.info(
       { databasePath: getCodexDatabasePath(this.options.projectRoot) },
       "Initializing Codex database"
     );
     this.connection = openCodexConnection(this.options.projectRoot);
-    await runCodexMigrations(this.connection);
+    await runCodexMigrations(this.connection, this.migrationLog);
   }
 
   public close(): Promise<void> {
     if (this.connection?.sqlite.open) {
       this.connection.sqlite.close();
-      log.info({ databasePath: this.connection.path }, "Closed Codex database");
+      this.log.info(
+        { databasePath: this.connection.path },
+        "Closed Codex database"
+      );
     }
     this.connection = undefined;
     return Promise.resolve();
@@ -628,7 +644,7 @@ export class SqliteCodexRepository implements CodexRepository {
   }
 
   public rebuildIndex(): Promise<void> {
-    rebuildCodexSearchIndex(this.conn.sqlite);
+    rebuildCodexSearchIndexWithLogger(this.conn.sqlite, this.ftsLog);
     return Promise.resolve();
   }
 
@@ -661,7 +677,7 @@ export class SqliteCodexRepository implements CodexRepository {
     try {
       return this.conn.sqlite.transaction(operation)();
     } catch (cause) {
-      throw mapSqliteError(cause);
+      throw mapSqliteError(cause, this.log);
     }
   }
 
@@ -688,7 +704,7 @@ function countTable(
     .get() as number;
 }
 
-function mapSqliteError(cause: unknown): Error {
+function mapSqliteError(cause: unknown, logger: pino.Logger): Error {
   const message = cause instanceof Error ? cause.message : String(cause);
   if (message.includes("UNIQUE constraint failed")) {
     return new CodexConflictError(
@@ -701,7 +717,7 @@ function mapSqliteError(cause: unknown): Error {
     );
   }
   if (message.includes("SQLITE_BUSY")) {
-    log.warn("SQLite busy while writing Codex data");
+    logger.warn("SQLite busy while writing Codex data");
   }
   return cause instanceof Error
     ? cause

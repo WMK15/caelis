@@ -1,0 +1,33 @@
+{
+  "name": "@caelis/project-write",
+  "version": "0.0.0",
+  "type": "module",
+  "exports": {
+    ".": {
+      "development": "./src/index.ts",
+      "types": "./src/index.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "types": "./src/index.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --dts --sourcemap --clean",
+    "test": "vitest run",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist coverage"
+  },
+  "dependencies": {
+    "@caelis/core": "workspace:*",
+    "@caelis/project-index": "workspace:*",
+    "@caelis/shared": "workspace:*",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "@caelis/testing": "workspace:*"
+  }
+}

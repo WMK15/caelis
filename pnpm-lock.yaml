@@ -8,6 +8,9 @@ importers:
 
   .:
     devDependencies:
+      '@caelis/cli':
+        specifier: workspace:*
+        version: link:apps/cli
       '@changesets/cli':
         specifier: ^2.29.7
         version: 2.31.1(@types/node@24.13.3)
@@ -53,6 +56,12 @@ importers:
       '@caelis/project-index':
         specifier: workspace:*
         version: link:../../packages/project-index
+      '@caelis/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
+      better-sqlite3:
+        specifier: ^13.0.1
+        version: 13.0.1
       commander:
         specifier: ^14.0.2
         version: 14.0.3
@@ -68,6 +77,9 @@ importers:
       '@caelis/project-index':
         specifier: workspace:*
         version: link:../../packages/project-index
+      '@caelis/project-write':
+        specifier: workspace:*
+        version: link:../../packages/project-write
       '@modelcontextprotocol/sdk':
         specifier: ^1.21.0
         version: 1.30.0(zod@4.4.3)
@@ -77,6 +89,10 @@ importers:
       zod:
         specifier: ^4.1.13
         version: 4.4.3
+    devDependencies:
+      '@caelis/testing':
+        specifier: workspace:*
+        version: link:../../packages/testing
 
   packages/adapter-rmmz-native:
     dependencies:
@@ -159,6 +175,25 @@ importers:
       '@caelis/shared':
         specifier: workspace:*
         version: link:../shared
+
+  packages/project-write:
+    dependencies:
+      '@caelis/core':
+        specifier: workspace:*
+        version: link:../core
+      '@caelis/project-index':
+        specifier: workspace:*
+        version: link:../project-index
+      '@caelis/shared':
+        specifier: workspace:*
+        version: link:../shared
+      zod:
+        specifier: ^4.1.13
+        version: 4.4.3
+    devDependencies:
+      '@caelis/testing':
+        specifier: workspace:*
+        version: link:../testing
 
   packages/rmmz-schema:
     dependencies:

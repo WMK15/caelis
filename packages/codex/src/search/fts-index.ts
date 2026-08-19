@@ -1,11 +1,10 @@
 import type Database from "better-sqlite3";
+import type pino from "pino";
 
 import { createLogger } from "@caelis/shared";
 
 import { CodexSearchError } from "../errors.js";
 import type { CodexSearchQuery, CodexSearchResult } from "./codex-search.js";
-
-const log = createLogger("codex:fts");
 
 export interface SearchDocumentInput {
   documentId: string;
@@ -122,7 +121,15 @@ export function searchCodexIndex(
 
 /** Remove all search documents and rebuild from canonical tables. */
 export function rebuildCodexSearchIndex(sqlite: Database.Database): void {
-  log.info("Rebuilding Codex FTS index");
+  rebuildCodexSearchIndexWithLogger(sqlite, createLogger("codex:fts"));
+}
+
+/** Remove all search documents and rebuild from canonical tables. */
+export function rebuildCodexSearchIndexWithLogger(
+  sqlite: Database.Database,
+  logger: pino.Logger
+): void {
+  logger.info("Rebuilding Codex FTS index");
   const transaction = sqlite.transaction(() => {
     sqlite.prepare("DELETE FROM codex_search").run();
     rebuildEntities(sqlite);
@@ -132,7 +139,7 @@ export function rebuildCodexSearchIndex(sqlite: Database.Database): void {
     rebuildDecisions(sqlite);
   });
   transaction();
-  log.info("Completed Codex FTS index rebuild");
+  logger.info("Completed Codex FTS index rebuild");
 }
 
 /** Return the number of FTS rows. */

@@ -1,4 +1,5 @@
 import { Command } from "commander";
+import { setLogLevel } from "@caelis/shared";
 
 import { registerCodexCommand } from "./commands/codex.js";
 import { registerDoctorCommand } from "./commands/doctor.js";
@@ -13,7 +14,13 @@ export function createProgram(): Command {
   program
     .name("caelis")
     .description("Local-first RPG Maker MZ development intelligence toolkit.")
-    .version("0.0.0");
+    .version("0.0.0")
+    .option("--debug", "show detailed error stacks");
+
+  program.hook("preAction", () => {
+    const { debug } = program.opts<{ debug?: boolean }>();
+    setLogLevel(debug ? "debug" : "warn");
+  });
 
   registerInitCommand(program);
   registerScanCommand(program);

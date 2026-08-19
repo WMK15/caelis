@@ -17,7 +17,7 @@ Caelis is a local-first development intelligence and automation toolkit for RPG 
 
 ## Status
 
-Caelis is in early development. The current repository is a strict TypeScript monorepo scaffold with read-only project inspection, validation foundations, CLI commands, MCP tools, schema boundaries, and future write-safety interfaces.
+Caelis is in early development. The current repository is a strict TypeScript monorepo scaffold with project inspection, validation foundations, CLI commands, MCP tools, schema boundaries, and the first explicit plan-review-apply write workflow.
 
 ## What Caelis Is
 
@@ -54,6 +54,7 @@ packages/core            Foundational types and errors
 packages/config          .caelis/config.yaml schema and loader
 packages/rmmz-schema     RPG Maker MZ runtime schemas
 packages/project-index   Read-only scanner and validation
+packages/project-write   Safe persisted plans and guarded project writes
 packages/project-graph   In-memory entity relationship graph
 packages/database        Semantic database operation types
 packages/events          Event AST and initial compiler/parser
@@ -95,18 +96,57 @@ pnpm typecheck
 pnpm check
 ```
 
-## CLI Examples
+## CLI Usage
+
+### Repository development
+
+Build the CLI explicitly, then run the package-declared `caelis` binary from the repository root. `pnpm caelis` uses the already-built workspace executable and does not rebuild automatically.
 
 ```bash
-pnpm --filter @caelis/cli dev -- fixtures/vanilla-minimal scan
-pnpm --filter @caelis/cli dev -- fixtures/vanilla-minimal validate
-pnpm --filter @caelis/cli dev -- fixtures/vanilla-minimal doctor --json
-pnpm --filter @caelis/cli dev -- fixtures/vanilla-minimal init
-pnpm --filter @caelis/cli dev -- codex status fixtures/vanilla-minimal
-pnpm --filter @caelis/cli dev -- codex search "hero" fixtures/vanilla-minimal
+pnpm build:cli
+pnpm caelis --help
+pnpm caelis scan fixtures/vanilla-minimal
 ```
 
-After building, the CLI binary is named `caelis`.
+Run `pnpm build:cli` again after changing files under `apps/cli/src`; otherwise `pnpm caelis` and `pnpm exec caelis` continue to use the previous build output.
+
+### Workspace executable
+
+After building the CLI package, pnpm can invoke the workspace binary directly.
+
+```bash
+pnpm build:cli
+pnpm exec caelis --help
+```
+
+### Global development link
+
+Expose the local CLI globally while developing from `apps/cli`.
+
+```bash
+cd apps/cli
+pnpm link --global
+caelis --help
+```
+
+If pnpm has not configured a global binary directory yet, run `pnpm setup`, restart the shell, then run `pnpm link --global` again.
+
+Remove the global development link with:
+
+```bash
+pnpm uninstall --global @caelis/cli
+```
+
+### Command examples
+
+```bash
+pnpm caelis scan fixtures/vanilla-minimal
+pnpm caelis validate fixtures/vanilla-minimal
+pnpm caelis doctor fixtures/vanilla-minimal --json
+pnpm caelis init fixtures/vanilla-minimal
+pnpm caelis codex status fixtures/vanilla-minimal
+pnpm caelis codex search "hero" fixtures/vanilla-minimal
+```
 
 ## MCP Server Example
 
@@ -116,7 +156,7 @@ Start the stdio MCP server with:
 pnpm --filter @caelis/mcp-server dev
 ```
 
-Initial read-only tools:
+Inspection tools:
 
 - `project_scan`
 - `project_summary`
@@ -124,6 +164,12 @@ Initial read-only tools:
 - `codex_status`
 - `codex_search`
 - `codex_get_entity`
+
+Plan/apply tools:
+
+- `actor_create_plan`: persists a proposed RPG Maker MZ actor addition without modifying `data/Actors.json`.
+- `change_plan_get`: reads a persisted plan for review.
+- `change_apply`: applies a reviewed plan only when called with `confirm: true`, then backs up, atomically replaces, validates, and rolls back on validation failure.
 
 Initial resources:
 
@@ -134,9 +180,10 @@ Initial resources:
 
 - Local-first operation by default.
 - No RPG Maker plugin execution during indexing.
-- No mutation tools exposed in the initial MCP server.
-- Preview-before-write for future changes.
-- Change sets and revert paths before direct project writes.
+- Read-only inspection remains separate from mutating tools.
+- Plan-before-write for project changes.
+- Mutating apply tools require explicit confirmation and a persisted reviewed plan.
+- Applies create backups under `.caelis/backups/`, validate the result, and roll back on failed validation.
 - Development-only runtime bridge with explicit enablement and token configuration.
 - No copied proprietary plugin code or private documentation.
 

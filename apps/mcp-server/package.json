@@ -25,8 +25,12 @@
   "dependencies": {
     "@caelis/codex": "workspace:*",
     "@caelis/project-index": "workspace:*",
+    "@caelis/project-write": "workspace:*",
     "@modelcontextprotocol/sdk": "^1.21.0",
     "pino": "^10.1.0",
     "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "@caelis/testing": "workspace:*"
   }
 }

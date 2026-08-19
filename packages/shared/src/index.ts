@@ -54,10 +54,23 @@ export async function hashFile(filePath: string): Promise<string> {
 }
 
 /** Shared structured logger used by Caelis packages. */
-export const logger = pino({
-  name: "caelis",
-  level: process.env.CAELIS_LOG_LEVEL ?? "info"
-});
+export const logger = pino(
+  {
+    name: "caelis",
+    level: process.env.CAELIS_LOG_LEVEL ?? "warn"
+  },
+  process.stderr
+);
+
+/** Change the shared structured logger level at runtime. */
+export function setLogLevel(level: pino.LevelWithSilent): void {
+  logger.level = level;
+}
+
+/** Flush buffered logger output before process exit when supported. */
+export function flushLogger(): void {
+  logger.flush();
+}
 
 /** Create a child logger for a package or subsystem. */
 export function createLogger(component: string): pino.Logger {

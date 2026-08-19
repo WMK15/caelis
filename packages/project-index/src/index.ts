@@ -1,7 +1,7 @@
-import { access, readdir, readFile, stat } from "node:fs/promises";
+import { readdir, readFile, stat } from "node:fs/promises";
 import path from "node:path";
 
-import { ProjectNotFoundError } from "@caelis/core";
+import { ValidationError } from "@caelis/core";
 import { normalizePath } from "@caelis/shared";
 
 /** Asset counts keyed by project-relative asset folder. */
@@ -41,13 +41,15 @@ export interface ProjectValidationReport {
   issues: ProjectValidationIssue[];
 }
 
+const projectMarkerExtension = ".rmmzproject";
+const requiredProjectDirectories = ["data", "img", "audio", "js"] as const;
+
 /** Return whether a path resembles an RPG Maker MZ project. */
 export async function detectRpgMakerMzProject(
   projectRoot: string
 ): Promise<boolean> {
   try {
-    await access(path.join(projectRoot, "Game.rmmzproject"));
-    return true;
+    return (await findProjectMarkers(projectRoot)).length === 1;
   } catch {
     return false;
   }
@@ -57,9 +59,7 @@ export async function detectRpgMakerMzProject(
 export async function scanProject(
   projectRoot: string
 ): Promise<ProjectScanResult> {
-  if (!(await detectRpgMakerMzProject(projectRoot))) {
-    throw new ProjectNotFoundError(projectRoot);
-  }
+  await validateProjectRoot(projectRoot);
 
   const folders = {
     data: await isDirectory(path.join(projectRoot, "data")),
@@ -158,6 +158,66 @@ export async function validateProject(
   };
 }
 
+async function validateProjectRoot(projectRoot: string): Promise<void> {
+  const markers = await findProjectMarkers(projectRoot);
+
+  if (markers.length === 0) {
+    const parentMarkers = await findProjectMarkers(path.dirname(projectRoot));
+    if (parentMarkers.length > 0) {
+      throw new ValidationError(
+        `The supplied path points to "${path.basename(projectRoot)}" inside an RPG Maker MZ project. Use the project root instead: ${path.dirname(projectRoot)}`,
+        { projectRoot, projectMarkers: parentMarkers }
+      );
+    }
+
+    throw new ValidationError(
+      `No RPG Maker MZ project marker (*${projectMarkerExtension}) found in ${projectRoot}. Run the command from the project root.`,
+      { projectRoot }
+    );
+  }
+
+  if (markers.length > 1) {
+    throw new ValidationError(
+      `Multiple RPG Maker MZ project markers found in ${projectRoot}: ${markers.join(", ")}. Keep exactly one ${projectMarkerExtension} file in the project root.`,
+      { projectRoot, projectMarkers: markers }
+    );
+  }
+
+  const missingDirectories = (
+    await Promise.all(
+      requiredProjectDirectories.map(async (directory) => ({
+        directory,
+        exists: await isDirectory(path.join(projectRoot, directory))
+      }))
+    )
+  )
+    .filter((result) => !result.exists)
+    .map((result) => result.directory);
+
+  if (missingDirectories.length > 0) {
+    throw new ValidationError(
+      `RPG Maker MZ project is missing required directories: ${missingDirectories.join(", ")}. Use the project root and restore the missing folders.`,
+      { projectRoot, missingDirectories }
+    );
+  }
+}
+
+async function findProjectMarkers(projectRoot: string): Promise<string[]> {
+  try {
+    const entries = await readdir(projectRoot, { withFileTypes: true });
+    return entries
+      .filter(
+        (entry) =>
+          entry.isFile() &&
+          path.extname(entry.name).toLowerCase() === projectMarkerExtension
+      )
+      .map((entry) => entry.name)
+      .sort((left, right) => left.localeCompare(right));
+  } catch {
+    return [];
+  }
+}
+
 async function isDirectory(filePath: string): Promise<boolean> {
   try {
     return (await stat(filePath)).isDirectory();
@@ -211,7 +271,13 @@ async function countAssets(
 
   return counts
     .flat()
-    .sort((left, right) => left.folder.localeCompare(right.folder));
+    .reduce<AssetCount[]>((unique, asset) => {
+      if (!unique.some((existing) => existing.folder === asset.folder)) {
+        unique.push(asset);
+      }
+      return unique;
+    }, [])
+    .sort(compareAssetCounts);
 }
 
 async function listDirectories(directory: string): Promise<string[]> {
@@ -221,11 +287,21 @@ async function listDirectories(directory: string): Promise<string[]> {
       .filter((entry) => entry.isDirectory())
       .map(async (entry) => {
         const fullPath = path.join(directory, entry.name);
-        return [fullPath, ...(await listDirectories(fullPath))];
+        return listDirectories(fullPath);
       })
   );
 
   return [directory, ...nested.flat()];
+}
+
+function compareAssetCounts(left: AssetCount, right: AssetCount): number {
+  if (left.folder < right.folder) {
+    return -1;
+  }
+  if (left.folder > right.folder) {
+    return 1;
+  }
+  return 0;
 }
 
 async function listAllFiles(directory: string): Promise<string[]> {

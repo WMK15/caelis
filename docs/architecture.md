@@ -5,7 +5,7 @@
 ```text
 MCP agent
   -> @caelis/mcp-server
-  -> project-index / rmmz-schema / project-graph / codex / guard
+  -> project-index / project-write / rmmz-schema / project-graph / codex / guard
   -> local RPG Maker MZ project files
 
 RPG Maker MZ playtest
@@ -21,6 +21,7 @@ RPG Maker MZ playtest
 - `@caelis/config`: `.caelis/config.yaml` schema and loading.
 - `@caelis/rmmz-schema`: fixture-driven RPG Maker MZ Zod schemas.
 - `@caelis/project-index`: read-only project scanning and validation.
+- `@caelis/project-write`: persisted write plans and guarded apply operations for RPG Maker project files.
 - `@caelis/project-graph`: in-memory entity relationship graph.
 - `@caelis/database`: semantic database operation types.
 - `@caelis/events`: event AST and initial compiler/parser.
@@ -36,11 +37,11 @@ RPG Maker MZ playtest
 
 ## Data Flow
 
-Project files are scanned read-only. JSON data is parsed through schemas where available. Codex memory is stored locally in `.caelis/caelis.sqlite3` using SQLite and Drizzle migrations. Future write operations will become semantic operations, then guarded change sets, then previews, then approved file changes.
+Project files are scanned read-only. JSON data is parsed through schemas where available. Codex memory is stored locally in `.caelis/caelis.sqlite3` using SQLite and Drizzle migrations. Write operations are split into persisted plans and explicit applies: planning records proposed file content and source hashes without modifying RPG Maker data, while apply requires confirmation, creates backups, atomically replaces files, validates, and rolls back on failed validation.
 
 ## MCP Architecture
 
-The initial MCP server exposes only read-only tools: `project_scan`, `project_summary`, and `validation_report`. Mutation tools are intentionally absent until guard previews and revert workflows are implemented.
+The MCP server keeps inspection, planning, and mutation separate. Read-only tools include `project_scan`, `project_summary`, `validation_report`, `codex_status`, `codex_search`, and `codex_get_entity`. `actor_create_plan` persists a proposed actor addition without touching `data/Actors.json`; `change_plan_get` retrieves the plan for review; `change_apply` is the only mutating step and requires `confirm: true` plus a valid, non-stale plan.
 
 ## Future Runtime Bridge
 

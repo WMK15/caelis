@@ -2,28 +2,32 @@ import { existsSync, mkdirSync, statSync } from "node:fs";
 import path from "node:path";
 
 import { migrate } from "drizzle-orm/better-sqlite3/migrator";
+import type pino from "pino";
 
 import { createLogger } from "@caelis/shared";
 
 import { CodexMigrationError } from "../errors.js";
 import type { CodexConnection } from "./connection.js";
 
-const log = createLogger("codex:migrations");
 const initialMigrationTag = "0000_initial_codex";
 
 /** Run Drizzle migrations, backing up existing databases before schema changes. */
 export async function runCodexMigrations(
-  connection: CodexConnection
+  connection: CodexConnection,
+  logger: pino.Logger = createLogger("codex:migrations")
 ): Promise<void> {
   try {
-    log.info({ databasePath: connection.path }, "Starting Codex migrations");
+    logger.info({ databasePath: connection.path }, "Starting Codex migrations");
     if (needsMigrationBackup(connection)) {
       const backupPath = await createMigrationBackup(connection);
-      log.info({ backupPath }, "Created Codex migration backup");
+      logger.info({ backupPath }, "Created Codex migration backup");
     }
 
     migrate(connection.db, { migrationsFolder: resolveMigrationsFolder() });
-    log.info({ databasePath: connection.path }, "Completed Codex migrations");
+    logger.info(
+      { databasePath: connection.path },
+      "Completed Codex migrations"
+    );
   } catch (cause) {
     throw new CodexMigrationError("Codex migrations failed.", {
       databasePath: connection.path,
