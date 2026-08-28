@@ -47,15 +47,24 @@ importers:
 
   apps/cli:
     dependencies:
+      '@caelis/adapter-visustella':
+        specifier: workspace:*
+        version: link:../../packages/adapter-visustella
       '@caelis/codex':
         specifier: workspace:*
         version: link:../../packages/codex
       '@caelis/config':
         specifier: workspace:*
         version: link:../../packages/config
+      '@caelis/events':
+        specifier: workspace:*
+        version: link:../../packages/events
       '@caelis/project-index':
         specifier: workspace:*
         version: link:../../packages/project-index
+      '@caelis/project-write':
+        specifier: workspace:*
+        version: link:../../packages/project-write
       '@caelis/shared':
         specifier: workspace:*
         version: link:../../packages/shared
@@ -71,9 +80,15 @@ importers:
 
   apps/mcp-server:
     dependencies:
+      '@caelis/adapter-visustella':
+        specifier: workspace:*
+        version: link:../../packages/adapter-visustella
       '@caelis/codex':
         specifier: workspace:*
         version: link:../../packages/codex
+      '@caelis/events':
+        specifier: workspace:*
+        version: link:../../packages/events
       '@caelis/project-index':
         specifier: workspace:*
         version: link:../../packages/project-index
@@ -101,6 +116,12 @@ importers:
         version: link:../adapter-sdk
 
   packages/adapter-sdk: {}
+
+  packages/adapter-visustella:
+    dependencies:
+      '@caelis/adapter-sdk':
+        specifier: workspace:*
+        version: link:../adapter-sdk
 
   packages/bridge-protocol:
     dependencies:

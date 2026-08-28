@@ -6,6 +6,7 @@ import { registerDoctorCommand } from "./commands/doctor.js";
 import { registerInitCommand } from "./commands/init.js";
 import { registerScanCommand } from "./commands/scan.js";
 import { registerValidateCommand } from "./commands/validate.js";
+import { registerProjectCommands } from "./commands/project.js";
 
 /** Create the Caelis CLI program. */
 export function createProgram(): Command {
@@ -26,6 +27,7 @@ export function createProgram(): Command {
   registerScanCommand(program);
   registerValidateCommand(program);
   registerDoctorCommand(program);
+  registerProjectCommands(program);
   registerCodexCommand(program);
 
   return program;

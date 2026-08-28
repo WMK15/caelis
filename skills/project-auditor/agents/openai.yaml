@@ -1,0 +1,4 @@
+interface:
+  display_name: "Caelis Project Auditor"
+  short_description: "Audit RPG Maker MZ projects with evidence."
+  default_prompt: "Use $project-auditor to audit this RPG Maker MZ project and prioritize the findings."

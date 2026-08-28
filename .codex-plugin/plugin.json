@@ -1,0 +1,34 @@
+{
+  "name": "caelis",
+  "version": "0.1.0",
+  "description": "Guarded RPG Maker MZ project intelligence, planning, and automation.",
+  "author": {
+    "name": "WMK15",
+    "url": "https://github.com/WMK15"
+  },
+  "homepage": "https://github.com/WMK15/caelis",
+  "repository": "https://github.com/WMK15/caelis",
+  "license": "Apache-2.0",
+  "keywords": [
+    "rpg-maker-mz",
+    "game-development",
+    "mcp",
+    "project-intelligence"
+  ],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "Caelis for RPG Maker MZ",
+    "shortDescription": "Build RPG Maker MZ games with guarded agent tools.",
+    "longDescription": "Inspect RPG Maker MZ projects, design database records and events, search local project canon, and apply reviewed changes through Caelis safeguards.",
+    "developerName": "WMK15",
+    "category": "Developer Tools",
+    "capabilities": ["Interactive", "Read", "Write"],
+    "websiteURL": "https://github.com/WMK15/caelis",
+    "defaultPrompt": [
+      "Audit my RPG Maker MZ project with Caelis.",
+      "Plan a new RPG Maker MZ quest event safely.",
+      "Inspect this project's database and canon."
+    ]
+  }
+}

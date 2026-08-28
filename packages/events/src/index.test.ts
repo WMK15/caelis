@@ -34,9 +34,41 @@ describe("event AST", () => {
     ]);
   });
 
-  it("throws typed errors for deferred nodes", () => {
+  it("compiles dialogue, database controls, transfers and plugin commands", () => {
+    expect(
+      compileEventCommands([
+        { type: "dialogue", speaker: "Hero", text: "Hi\nThere" },
+        { type: "set-switch", switchId: 4, value: true },
+        { type: "set-variable", variableId: 2, value: 9 },
+        { type: "call-common-event", commonEventId: 3 },
+        { type: "transfer-player", mapId: 2, x: 5, y: 6 },
+        {
+          type: "plugin-command",
+          pluginName: "Example",
+          commandName: "Run",
+          args: { speed: "4" }
+        }
+      ])
+    ).toEqual([
+      { code: 101, indent: 0, parameters: ["", 0, 0, 2, "Hero"] },
+      { code: 401, indent: 0, parameters: ["Hi"] },
+      { code: 401, indent: 0, parameters: ["There"] },
+      { code: 121, indent: 0, parameters: [4, 4, 0] },
+      { code: 122, indent: 0, parameters: [2, 2, 0, 0, 9] },
+      { code: 117, indent: 0, parameters: [3] },
+      { code: 201, indent: 0, parameters: [0, 2, 5, 6, 0, 0] },
+      {
+        code: 357,
+        indent: 0,
+        parameters: ["Example", "Run", "Run", { speed: "4" }]
+      },
+      { code: 0, indent: 0, parameters: [] }
+    ]);
+  });
+
+  it("throws typed errors for unsupported raw command variants", () => {
     expect(() =>
-      compileEventCommands([{ type: "dialogue", text: "Hi" }])
+      parseEventCommands([{ code: 999, indent: 0, parameters: [] }])
     ).toThrow(NotImplementedError);
   });
 });

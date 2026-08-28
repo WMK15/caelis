@@ -1,0 +1,4 @@
+interface:
+  display_name: "Caelis Event Designer"
+  short_description: "Design and validate guarded RPG Maker MZ events."
+  default_prompt: "Use $event-designer to design and plan this RPG Maker MZ event safely."

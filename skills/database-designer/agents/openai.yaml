@@ -1,0 +1,4 @@
+interface:
+  display_name: "Caelis Database Designer"
+  short_description: "Design safe, project-consistent RPG Maker MZ data."
+  default_prompt: "Use $database-designer to design and plan this RPG Maker MZ database change safely."

@@ -21,12 +21,15 @@ const namedRecord = z
 /** Generic RPG Maker database record schema. */
 export const databaseRecordSchema = namedRecord;
 export const actorSchema = namedRecord;
+export const animationSchema = namedRecord;
 export const classSchema = namedRecord;
 export const skillSchema = namedRecord;
 export const itemSchema = namedRecord;
 export const weaponSchema = namedRecord;
 export const armorSchema = namedRecord;
+export const enemySchema = namedRecord;
 export const stateSchema = namedRecord;
+export const tilesetSchema = namedRecord;
 
 /** RPG Maker event command schema preserving command parameters. */
 export const eventCommandSchema = z
@@ -34,6 +37,23 @@ export const eventCommandSchema = z
     code: z.number().int(),
     indent: z.number().int().nonnegative().default(0),
     parameters: z.array(z.unknown()).default([])
+  })
+  .passthrough();
+
+/** Troop battle-event page schema. */
+export const troopPageSchema = z
+  .object({
+    conditions: z.record(z.string(), z.unknown()).optional(),
+    span: z.number().int().optional(),
+    list: z.array(eventCommandSchema).default([])
+  })
+  .passthrough();
+
+/** Enemy group and battle event schema. */
+export const troopSchema = namedRecord
+  .extend({
+    members: z.array(z.record(z.string(), z.unknown())).default([]),
+    pages: z.array(troopPageSchema).default([])
   })
   .passthrough();
 

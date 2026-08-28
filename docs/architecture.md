@@ -24,7 +24,7 @@ RPG Maker MZ playtest
 - `@caelis/project-write`: persisted write plans and guarded apply operations for RPG Maker project files.
 - `@caelis/project-graph`: in-memory entity relationship graph.
 - `@caelis/database`: semantic database operation types.
-- `@caelis/events`: event AST and initial compiler/parser.
+- `@caelis/events`: event AST compiler/parser for common MZ commands.
 - `@caelis/codex`: SQLite-backed local memory, canon interfaces, migrations, and FTS5 search.
 - `@caelis/guard`: change-set planning and validation boundary.
 - `@caelis/adapter-sdk`: plugin adapter contracts.
@@ -41,7 +41,7 @@ Project files are scanned read-only. JSON data is parsed through schemas where a
 
 ## MCP Architecture
 
-The MCP server keeps inspection, planning, and mutation separate. Read-only tools include `project_scan`, `project_summary`, `validation_report`, `codex_status`, `codex_search`, and `codex_get_entity`. `actor_create_plan` persists a proposed actor addition without touching `data/Actors.json`; `change_plan_get` retrieves the plan for review; `change_apply` is the only mutating step and requires `confirm: true` plus a valid, non-stale plan.
+The MCP server keeps inspection, planning, and mutation separate. Read-only tools inspect the project, every database section, maps, events, system data, plugins, and Codex. Planning tools persist proposed database, system, multi-page map-event, and plugin changes without touching project data; `change_plan_get` retrieves a plan for review; `change_apply` is the only project-file mutating step and requires `confirm: true` plus a valid, non-stale plan. Multi-file plugin plans are backed up and rolled back as one operation.
 
 ## Future Runtime Bridge
 

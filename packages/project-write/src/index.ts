@@ -10,7 +10,7 @@ import {
 } from "node:fs/promises";
 import path from "node:path";
 
-import { CaelisError, ValidationError } from "@caelis/core";
+import { ValidationError } from "@caelis/core";
 import {
   scanProject,
   validateProject,
@@ -18,6 +18,11 @@ import {
 } from "@caelis/project-index";
 import { hashFile, normalizePath } from "@caelis/shared";
 import { z } from "zod";
+
+import { ChangePlanError } from "./errors.js";
+import { applyProjectChangePlan, isProjectChangePlan } from "./operations.js";
+
+export { ChangePlanError } from "./errors.js";
 
 const actorRelativePath = "data/Actors.json";
 const classesRelativePath = "data/Classes.json";
@@ -159,23 +164,20 @@ export interface ChangePlan {
 }
 
 export interface ChangeApplyResult {
-  actorId: number;
+  actorId?: number;
   backupPath: string;
   affectedFile: string;
   validation: ProjectValidationReport;
+  operation?: string;
+  affectedFiles?: string[];
+  backupPaths?: string[];
 }
+
+export * from "./operations.js";
+export * from "./character-generator.js";
 
 export interface ChangeApplyOptions {
   validate?: (projectRoot: string) => Promise<ProjectValidationReport>;
-}
-
-export class ChangePlanError extends CaelisError {
-  public constructor(
-    message: string,
-    details?: Readonly<Record<string, unknown>>
-  ) {
-    super(message, "CHANGE_PLAN_ERROR", details);
-  }
 }
 
 /** Create and persist a safe actor creation plan without modifying Actors.json. */
@@ -275,6 +277,18 @@ export async function applyChangePlan(
 ): Promise<ChangeApplyResult> {
   const parsed = changeApplyInputSchema.parse(input);
   const project = await resolveProject(parsed.projectRoot);
+  const rawPlan = await loadRawChangePlan(project.root, parsed.planId);
+  if (isProjectChangePlan(rawPlan)) {
+    const result = await applyProjectChangePlan(parsed, options);
+    return {
+      backupPath: result.backupPaths[0] ?? "",
+      affectedFile: result.affectedFiles[0] ?? "",
+      validation: result.validation,
+      operation: result.operation,
+      affectedFiles: result.affectedFiles,
+      backupPaths: result.backupPaths
+    };
+  }
   const plan = await loadChangePlan(project.root, parsed.planId);
   assertPlanCanApply(plan, project);
 
@@ -564,6 +578,23 @@ async function loadChangePlan(
     });
   }
   return JSON.parse(await readFile(resolvedPlanPath, "utf8")) as ChangePlan;
+}
+
+async function loadRawChangePlan(
+  projectRoot: string,
+  planId: string
+): Promise<unknown> {
+  if (!/^plan_[0-9a-f-]+$/i.test(planId)) {
+    throw new ChangePlanError("Invalid change plan ID.", { planId });
+  }
+  const planPath = path.join(projectRoot, ".caelis", "plans", `${planId}.json`);
+  const resolvedPlanPath = await realpath(planPath).catch(() => undefined);
+  if (!resolvedPlanPath || !isInside(projectRoot, resolvedPlanPath)) {
+    throw new ChangePlanError("Change plan was not found in this project.", {
+      planId
+    });
+  }
+  return JSON.parse(await readFile(resolvedPlanPath, "utf8")) as unknown;
 }
 
 function assertPlanBelongsToProject(

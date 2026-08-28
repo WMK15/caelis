@@ -57,11 +57,12 @@ packages/project-index   Read-only scanner and validation
 packages/project-write   Safe persisted plans and guarded project writes
 packages/project-graph   In-memory entity relationship graph
 packages/database        Semantic database operation types
-packages/events          Event AST and initial compiler/parser
+packages/events          Event AST compiler/parser for common MZ commands
 packages/codex           Local memory and canon interfaces
 packages/guard           Change-set planning and validation
 packages/adapter-sdk     Plugin adapter interfaces
 packages/adapter-rmmz-native Native RPG Maker MZ adapter
+packages/adapter-visustella VisuStella metadata, typing, and load-order adapter
 packages/bridge-protocol Runtime bridge message types
 packages/testing         Fixture and temporary project helpers
 packages/shared          Shared utilities
@@ -148,6 +149,12 @@ pnpm caelis codex status fixtures/vanilla-minimal
 pnpm caelis codex search "hero" fixtures/vanilla-minimal
 ```
 
+## Project Editing
+
+Caelis exposes guarded operations for all RPG Maker MZ database sections, System/Types/Terms, multi-page map events, common events, troop battle events, plugin configuration, and local plugin scaffolding. The CLI and MCP use the same plan-review-apply workflow with stale checks, backups, validation, and rollback.
+
+See [Project Operations](docs/project-operations.md) for commands, MCP tools, supported event AST nodes, and the Character Generator boundary. VisuStella support and its safety boundary are documented in [VisuStella MZ Compatibility](docs/visustella-compatibility.md).
+
 ## MCP Server Example
 
 Start the stdio MCP server with:
@@ -164,10 +171,22 @@ Inspection tools:
 - `codex_status`
 - `codex_search`
 - `codex_get_entity`
+- `database_list`, `database_get`
+- `system_get`
+- `map_get`, `map_event_get`
+- `plugin_list`, `plugin_get`
+- `visustella_status`, `visustella_plugin_get`
+- `character_generator_status`
 
 Plan/apply tools:
 
 - `actor_create_plan`: persists a proposed RPG Maker MZ actor addition without modifying `data/Actors.json`.
+- `database_record_create_plan`, `database_record_update_plan`
+- `system_update_plan`, `map_event_upsert_plan`
+- `event_compile`
+- `plugin_configure_plan`, `plugin_create_plan`
+- `visustella_parameter_update_plan`, `visustella_command_compile`
+- `character_generator_launch`
 - `change_plan_get`: reads a persisted plan for review.
 - `change_apply`: applies a reviewed plan only when called with `confirm: true`, then backs up, atomically replaces, validates, and rolls back on validation failure.
 

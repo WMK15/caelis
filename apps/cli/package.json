@@ -26,9 +26,12 @@
     "clean": "rm -rf dist coverage"
   },
   "dependencies": {
+    "@caelis/adapter-visustella": "workspace:*",
     "@caelis/codex": "workspace:*",
     "@caelis/config": "workspace:*",
+    "@caelis/events": "workspace:*",
     "@caelis/project-index": "workspace:*",
+    "@caelis/project-write": "workspace:*",
     "@caelis/shared": "workspace:*",
     "better-sqlite3": "^13.0.1",
     "commander": "^14.0.2",

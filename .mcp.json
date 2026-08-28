@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "caelis": {
+      "command": "bash",
+      "args": ["-lc", "exec \"${PLUGIN_ROOT:-$PWD}/scripts/start-mcp.sh\""]
+    }
+  }
+}

@@ -3,12 +3,16 @@ import type { EntityId } from "@caelis/core";
 /** Supported RPG Maker database collections for semantic operations. */
 export type DatabaseCollection =
   | "actors"
+  | "animations"
   | "classes"
   | "skills"
   | "items"
   | "weapons"
   | "armors"
+  | "enemies"
   | "states"
+  | "tilesets"
+  | "troops"
   | "commonEvents";
 
 /** JSON-compatible patch value for future guarded writes. */
