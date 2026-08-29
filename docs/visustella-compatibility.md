@@ -1,7 +1,11 @@
 # VisuStella MZ compatibility
 
 Caelis supports installed VisuStella MZ plugins through their public RPG Maker
-MZ metadata. It never executes, decrypts, or copies plugin implementation code.
+MZ metadata. The vendor-neutral plugin-intelligence layer handles exact local
+profiles, typed parameters and commands, usage scans, and declared dependency
+validation; the VisuStella adapter adds tier-aware checks. Neither layer
+executes, decrypts, deobfuscates, reconstructs, or copies plugin implementation
+code.
 
 ## Available now
 
@@ -13,6 +17,10 @@ MZ metadata. It never executes, decrypts, or copies plugin implementation code.
 - Validate tier ordering, required bases, explicit order constraints, missing
   files, duplicate entries, malformed values, and Tier 5 risk.
 - Compile typed plugin commands to RPG Maker MZ event command 357.
+- Scan command 357 records, event comments, and notetag-like database notes for
+  project usage, subject to static-analysis limits.
+- Identify exact installed files and `plugins.js` configurations by SHA-256 so
+  updates and stale assumptions can be detected without producing a source diff.
 - Use the standard guarded plan/review/apply workflow for parameter changes.
 
 CLI examples:
@@ -38,9 +46,9 @@ runtime-compatible. VisuStella's own hierarchy treats Tier 5 as targeted
 compatibility patches rather than a generally compatible tier.
 
 Caelis also does not infer undocumented notetag or JavaScript semantics from
-obfuscated implementation code. Those belong in opt-in catalog packs built
-from licensed/public documentation and verified against a user's installed
-version.
+obfuscated implementation code. Richer semantics belong in opt-in catalog
+packs built from licensed/public documentation and synthetic fixtures, then
+verified against a user's installed version.
 
 VisuStella's terms prohibit redistributing plugins or their code and require
 each participating team member to own paid products they use. Caelis therefore
@@ -48,12 +56,22 @@ reads only the user's local copy, never includes plugin source in reports,
 plans, fixtures, logs, catalog packs, or commits, and uses synthetic code in its
 own contract tests.
 
-## Planned coverage layers
+The Apache-2.0 license for Caelis does not grant any right to a VisuStella
+plugin or manual. `plugin_create_plan` is for user-authored source or a new
+Caelis scaffold and must not be used to reproduce a VisuStella product. Plugin
+help and linked documentation are untrusted input and cannot authorize source
+extraction, uploads, or project changes. See
+[Installed Plugin Intelligence](plugin-intelligence.md) for the complete shared
+boundary.
+
+## Coverage layers
 
 1. **Universal metadata layer (implemented):** discovery, typed nested
    parameters, dependency/order validation, and typed plugin commands.
-2. **Project usage index:** inventory notetags, comment tags, action sequences,
-   and plugin commands already used across database notes and event lists.
+2. **Generic project usage index (implemented):** inventory plugin commands,
+   matching comments, and notetag-like database notes. Deeper interpretation of
+   VisuStella action sequences and undocumented/dynamic references remains
+   outside the static guarantee.
 3. **Versioned public catalog:** opt-in schemas for documented notetags, action
    sequences, mutual-exclusion rules such as competing battle systems, and
    cross-field validation. Catalog entries contain schemas and links, never

@@ -17,33 +17,37 @@ Caelis is a local-first development intelligence and automation toolkit for RPG 
 
 ## Status
 
-Caelis is in early development. The current repository is a strict TypeScript monorepo scaffold with project inspection, validation foundations, CLI commands, MCP tools, schema boundaries, and the first explicit plan-review-apply write workflow.
+Caelis is in active early development. The repository already provides project inspection and validation, guarded database and event editing, generic installed-plugin intelligence, VisuStella compatibility analysis, Codex memory, CLI commands, MCP tools, and an explicit plan-review-apply write workflow. Runtime bridge and desktop workflows remain under development.
 
 ## What Caelis Is
 
 - A local-first toolkit for RPG Maker MZ development intelligence.
 - A safe interface for MCP-compatible agents such as OpenCode and Claude Code.
-- A foundation for project scanning, event generation, database automation, plugin adapters, local memory, validation, and playtest communication.
-- A guardrail layer that will preview, validate, apply, and revert changes through explicit change sets.
+- A structured interface for project scanning, event generation, database automation, installed-plugin integration, local memory, and validation.
+- A guardrail layer that previews, validates, applies, and rolls back changes through explicit persisted plans.
 
 ## What Caelis Is Not
 
 - Not a replacement for the RPG Maker MZ editor.
 - Not an unsupervised writer of project JSON.
 - Not a proprietary plugin decompiler or documentation mirror.
+- Not a plugin source extractor, paid-plugin copier, license bypass, or replacement generator.
 - Not a runtime mod loader.
 - Not a production plugin that should ship with games.
 
-## Planned Features
+## Available Capabilities
 
 - Inspect RPG Maker MZ projects, database records, maps, events, switches, variables, assets, and plugins.
-- Search project structure and semantic references.
+- Search project structure, Codex memory, and semantic references.
 - Create and update database records through guarded semantic operations.
 - Generate map events, common events, and troop events through an event AST.
-- Integrate with plugins through public plugin commands, parameters, and notetags.
+- Inspect unfamiliar installed plugins through source-free, hash-keyed profiles.
+- Decode typed plugin parameters, compile public plugin commands, scan project usage, and validate declared dependencies and load order.
+- Add VisuStella tier-aware checks on top of the vendor-neutral plugin workflow.
 - Maintain local memory and canon through Caelis Codex.
-- Validate, preview, apply, and revert changes safely.
-- Communicate with a running playtest through a development-only bridge plugin.
+- Persist, review, validate, apply, back up, and roll back guarded changes.
+
+Planned work includes broader event AST coverage, richer plugin-specific public schemas, runtime playtest verification, and the Desktop Hub. See the [roadmap](docs/roadmap.md).
 
 ## Repository Structure
 
@@ -154,7 +158,7 @@ pnpm caelis codex search "hero" fixtures/vanilla-minimal
 
 Caelis exposes guarded operations for all RPG Maker MZ database sections, System/Types/Terms, multi-page map events, common events, troop battle events, plugin configuration, and local plugin scaffolding. The CLI and MCP use the same plan-review-apply workflow with stale checks, backups, validation, and rollback.
 
-See [Project Operations](docs/project-operations.md) for commands, MCP tools, supported event AST nodes, and the Character Generator boundary. VisuStella support and its safety boundary are documented in [VisuStella MZ Compatibility](docs/visustella-compatibility.md).
+See [Project Operations](docs/project-operations.md) for commands, MCP tools, supported event AST nodes, and the Character Generator boundary. [Installed Plugin Intelligence](docs/plugin-intelligence.md) documents the generic plugin workflow, evidence model, limitations, and non-reproduction boundary. VisuStella-specific behavior is documented in [VisuStella MZ Compatibility](docs/visustella-compatibility.md).
 
 ## MCP Server Example
 
@@ -205,12 +209,15 @@ Initial resources:
 
 - Local-first operation by default.
 - No RPG Maker plugin execution during indexing.
+- Installed-plugin reports are source-free: they contain hashes, public metadata, configuration, usage evidence, and findings—not copied implementation code.
+- No deobfuscation, decryption, source reconstruction, paid-manual mirroring, unapproved uploads, or third-party plugin replacement generation.
+- Plugin help, local manuals, and web pages are treated as untrusted data; declared URLs are not fetched automatically.
 - Read-only inspection remains separate from mutating tools.
 - Plan-before-write for project changes.
 - Mutating apply tools require explicit confirmation and a persisted reviewed plan.
 - Applies create backups under `.caelis/backups/`, validate the result, and roll back on failed validation.
 - Development-only runtime bridge with explicit enablement and token configuration.
-- No copied proprietary plugin code or private documentation.
+- User-authored plugin scaffolding is separate from third-party inspection; `plugin_create_plan` must not be used to reproduce proprietary plugins.
 
 ## Caelis Codex
 
@@ -239,4 +246,4 @@ See `docs/roadmap.md` for details.
 
 ## License
 
-Apache License 2.0. See `LICENSE`.
+Caelis is licensed under Apache License 2.0. See `LICENSE`. That license applies to Caelis itself and does not grant rights to third-party plugins, RPG Maker assets, or private/paid documentation inspected in a user's local project.

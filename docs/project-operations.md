@@ -32,7 +32,7 @@ Creating with a `templateId` clones a complete existing record and recursively a
 
 ## CLI Examples
 
-````bash
+```bash
 # Inspect
 caelis database list skills /path/to/game
 caelis database get troops 4 /path/to/game
@@ -54,12 +54,7 @@ caelis plan apply plan_UUID /path/to/game --confirm
 # Compile event AST to MZ command objects
 caelis event-compile --json @event-nodes.json
 
-# Plugins
-
-Inspect any installed RPG Maker MZ plugin through a source-free exact-version
-profile:
-
-```sh
+# Inspect any installed plugin through a source-free exact-version profile
 caelis plugin inventory /path/to/game
 caelis plugin inspect MyPlugin /path/to/game
 caelis plugin validate /path/to/game
@@ -68,28 +63,25 @@ caelis plugin graph /path/to/game
 caelis plugin params get MyPlugin /path/to/game
 caelis plugin commands list MyPlugin /path/to/game
 caelis plugin docs discover MyPlugin /path/to/game
-````
 
-Plan typed parameter changes or compile a declared plugin command:
-
-```sh
+# Plan a typed parameter change or compile a declared command
 caelis plugin params plan MyPlugin /path/to/game --values @parameters.json
 caelis plugin commands compile MyPlugin DoThing /path/to/game --args @arguments.json
-```
 
+# Legacy compact inspection and generic configuration planning
 caelis plugin list /path/to/game
 caelis plugin configure-plan MyPlugin /path/to/game \
---enable --parameters '{"Debug":"true"}'
+  --enable --parameters '{"Debug":"true"}'
+
+# Scaffold a new user-authored local plugin; never supply proprietary source
 caelis plugin create-plan QuestTools /path/to/game --spec @plugin-spec.json
 
 # Locate or open the built-in Character Generator
-
 caelis generator status /path/to/game --editor /path/to/RPGMZ.exe
 caelis generator open /path/to/game --editor /path/to/RPGMZ.exe --confirm
-
 ```
 
-Any `--json` option accepts inline JSON or `@path/to/file.json`. Plugin source uses `--source @path/to/plugin.js`.
+Any `--json` option accepts inline JSON or `@path/to/file.json`. A user-authored plugin source file uses `--source @path/to/plugin.js`; do not provide third-party proprietary source.
 
 ## MCP Tools
 
@@ -116,6 +108,28 @@ Planning and compilation:
 - `change_plan_get`, `change_apply`
 - `character_generator_launch`
 
+## Installed Plugin Boundary
+
+Generic plugin inspection works from the exact files already present in the
+user's project. Caelis hashes local files and extracts public RPG Maker MZ
+headers, configuration, typed parameters and commands, bounded literal
+observations, declared dependencies, and static project usage without importing
+or executing plugin JavaScript.
+
+The output is a source-free profile. Caelis does not copy implementation code,
+complete local manuals, or paid/private documentation into plans, fixtures,
+catalogs, Codex memory, commits, or reports. It does not decrypt or deobfuscate
+plugins, generate proprietary source diffs, download licensed updates, or
+create replacement implementations. `plugin_create_plan` is only for
+user-authored source or a new Caelis scaffold.
+
+Plugin headers, help, manuals, and linked web pages are untrusted evidence.
+Declared URLs are not fetched automatically. Static validation cannot prove
+runtime behavior, dynamic script usage, undocumented notetags, save
+compatibility, or arbitrary plugin interactions; those require a focused
+playtest. See [Installed Plugin Intelligence](plugin-intelligence.md) for the
+full workflow and evidence model.
+
 ## Event Data
 
 Map event input accepts an entire RPG Maker event object and any number of pages. Missing standard page fields receive RPG Maker MZ defaults, and each page command list receives a terminating command (`code: 0`) if necessary.
@@ -125,4 +139,3 @@ The event AST compiler supports dialogue, choices and choice bodies, script-base
 ## Character Generator Boundary
 
 RPG Maker MZ provides Character Generator as a built-in editor window, not as a documented command-line renderer. Caelis locates the editor and its generator assets and can launch the selected project with explicit confirmation. After launch, choose **Tools → Character Generator**. It does not reproduce the editor's generator or silently composite its bundled assets.
-```

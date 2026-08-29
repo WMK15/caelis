@@ -41,6 +41,14 @@ Relationships connect entities with a typed edge such as `located-in`, `requires
 
 Sources describe evidence such as project files, notes, user input, runtime observations, or agent outputs. Large source text is split into `source_chunks` for search.
 
+Third-party plugin implementation source and private/paid manuals must not be
+ingested into Codex. Store a source-free reference instead: plugin name,
+project-relative path, exact file hash, public metadata identity, documentation
+URL or local descriptor, and a concise non-infringing finding. This keeps Codex
+useful for version and compatibility decisions without turning project memory
+into a proprietary code or documentation mirror. See
+[Installed Plugin Intelligence](plugin-intelligence.md).
+
 ## Decisions
 
 Decisions record accepted design or canon choices, their reasoning, status, and optional source.
