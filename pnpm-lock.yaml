@@ -59,6 +59,9 @@ importers:
       '@caelis/events':
         specifier: workspace:*
         version: link:../../packages/events
+      '@caelis/plugin-intelligence':
+        specifier: workspace:*
+        version: link:../../packages/plugin-intelligence
       '@caelis/project-index':
         specifier: workspace:*
         version: link:../../packages/project-index
@@ -89,6 +92,9 @@ importers:
       '@caelis/events':
         specifier: workspace:*
         version: link:../../packages/events
+      '@caelis/plugin-intelligence':
+        specifier: workspace:*
+        version: link:../../packages/plugin-intelligence
       '@caelis/project-index':
         specifier: workspace:*
         version: link:../../packages/project-index
@@ -185,6 +191,8 @@ importers:
       '@caelis/core':
         specifier: workspace:*
         version: link:../core
+
+  packages/plugin-intelligence: {}
 
   packages/project-graph: {}
 

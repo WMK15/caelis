@@ -19,7 +19,7 @@ description: Inspect, design, compile, and safely plan RPG Maker MZ map events, 
 - Prefer supported AST nodes for dialogue, choices, conditional branches, switches, constant variable assignment, common-event calls, transfers, comments, waits, exit processing, scripts, and MZ plugin commands.
 - Use `event_compile` to inspect generated command objects before placing them into a planned event.
 - Use raw command objects only for commands the AST cannot represent, and explain why.
-- Introduce script or plugin commands only with explicit user acceptance. Use `visustella_command_compile` for commands supported by installed public VisuStella metadata.
+- Introduce script or plugin commands only with explicit user acceptance. Use `visustella_command_compile` for commands supported by installed public VisuStella metadata; use `$plugin-integrator` first when the installed plugin or its command contract is unfamiliar.
 - Treat new quest or lore content as proposed until approved.
 
 ## Plan, review, and apply

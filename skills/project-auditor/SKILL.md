@@ -15,6 +15,8 @@ Keep the audit read-only unless the user separately asks for fixes.
 4. Use `codex_search` only when canon, naming, or earlier design decisions help distinguish a defect from an intentional convention.
 5. With the CLI fallback, use `caelis doctor --json` in addition to `scan` and `validate` when environment health matters.
 
+Use `$plugin-integrator` for a deep investigation of an unfamiliar plugin, its public configuration, local profile, update impact, or compatibility evidence.
+
 Do not execute installed plugins or directly edit RPG Maker JSON while investigating.
 
 ## Classify evidence

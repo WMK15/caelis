@@ -1,0 +1,4 @@
+interface:
+  display_name: "Plugin Integrator"
+  short_description: "Safely integrate installed MZ plugins"
+  default_prompt: "Use $plugin-integrator to inspect and safely integrate an installed RPG Maker MZ plugin."

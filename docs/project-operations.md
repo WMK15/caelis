@@ -32,7 +32,7 @@ Creating with a `templateId` clones a complete existing record and recursively a
 
 ## CLI Examples
 
-```bash
+````bash
 # Inspect
 caelis database list skills /path/to/game
 caelis database get troops 4 /path/to/game
@@ -55,14 +55,38 @@ caelis plan apply plan_UUID /path/to/game --confirm
 caelis event-compile --json @event-nodes.json
 
 # Plugins
+
+Inspect any installed RPG Maker MZ plugin through a source-free exact-version
+profile:
+
+```sh
+caelis plugin inventory /path/to/game
+caelis plugin inspect MyPlugin /path/to/game
+caelis plugin validate /path/to/game
+caelis plugin usage /path/to/game --name MyPlugin
+caelis plugin graph /path/to/game
+caelis plugin params get MyPlugin /path/to/game
+caelis plugin commands list MyPlugin /path/to/game
+caelis plugin docs discover MyPlugin /path/to/game
+````
+
+Plan typed parameter changes or compile a declared plugin command:
+
+```sh
+caelis plugin params plan MyPlugin /path/to/game --values @parameters.json
+caelis plugin commands compile MyPlugin DoThing /path/to/game --args @arguments.json
+```
+
 caelis plugin list /path/to/game
 caelis plugin configure-plan MyPlugin /path/to/game \
-  --enable --parameters '{"Debug":"true"}'
+--enable --parameters '{"Debug":"true"}'
 caelis plugin create-plan QuestTools /path/to/game --spec @plugin-spec.json
 
 # Locate or open the built-in Character Generator
+
 caelis generator status /path/to/game --editor /path/to/RPGMZ.exe
 caelis generator open /path/to/game --editor /path/to/RPGMZ.exe --confirm
+
 ```
 
 Any `--json` option accepts inline JSON or `@path/to/file.json`. Plugin source uses `--source @path/to/plugin.js`.
@@ -75,6 +99,11 @@ Inspection:
 - `system_get`
 - `map_get`, `map_event_get`
 - `plugin_list`, `plugin_get`
+- `plugin_inventory`, `plugin_inspect`, `plugin_validate`
+- `plugin_usage_scan`, `plugin_dependency_graph`
+- `plugin_parameter_get`, `plugin_parameter_update_plan`
+- `plugin_command_list`, `plugin_command_describe`, `plugin_command_compile`
+- `plugin_documentation_sources`
 - `character_generator_status`
 
 Planning and compilation:
@@ -96,3 +125,4 @@ The event AST compiler supports dialogue, choices and choice bodies, script-base
 ## Character Generator Boundary
 
 RPG Maker MZ provides Character Generator as a built-in editor window, not as a documented command-line renderer. Caelis locates the editor and its generator assets and can launch the selected project with explicit confirmation. After launch, choose **Tools → Character Generator**. It does not reproduce the editor's generator or silently composite its bundled assets.
+```

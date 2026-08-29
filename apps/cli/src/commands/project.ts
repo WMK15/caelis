@@ -9,6 +9,14 @@ import {
 } from "@caelis/adapter-visustella";
 import { compileEventCommands, type EventNode } from "@caelis/events";
 import {
+  compilePluginCommand,
+  discoverPluginDocumentation,
+  encodePluginParameterPatch,
+  getPluginProfile,
+  inspectPluginProject,
+  scanPluginUsage
+} from "@caelis/plugin-intelligence";
+import {
   applyChangePlan,
   configurePluginPlan,
   createDatabaseRecordPlan,
@@ -285,8 +293,161 @@ function registerPluginCommands(program: Command): void {
   const plugin = program
     .command("plugin")
     .description(
-      "Inspect, configure and create RPG Maker MZ plugins without executing them."
+      "Inspect, validate, configure and create RPG Maker MZ plugins without executing them."
     );
+  plugin
+    .command("inventory")
+    .argument("[projectPath]", "RPG Maker MZ project path", ".")
+    .description("Inventory installed and configured plugins from public data.")
+    .action(async (projectPath: string) => {
+      printJson(await inspectPluginProject(projectPath));
+    });
+  plugin
+    .command("inspect")
+    .argument("<name>")
+    .argument("[projectPath]", "RPG Maker MZ project path", ".")
+    .description(
+      "Inspect one plugin's public profile and current configuration."
+    )
+    .action(async (name: string, projectPath: string) => {
+      printJson(await getPluginProfile(projectPath, name));
+    });
+  plugin
+    .command("validate")
+    .argument("[projectPath]", "RPG Maker MZ project path", ".")
+    .description(
+      "Validate plugin files, configuration, and public dependencies."
+    )
+    .action(async (projectPath: string) => {
+      printJson(await inspectPluginProject(projectPath));
+    });
+  plugin
+    .command("usage")
+    .argument("[projectPath]", "RPG Maker MZ project path", ".")
+    .option("--name <name>", "limit the scan to one plugin")
+    .description("Scan project event data for plugin command usage.")
+    .action(async (projectPath: string, options: { name?: string }) => {
+      printJson(await scanPluginUsage(projectPath, options.name));
+    });
+  plugin
+    .command("graph")
+    .argument("[projectPath]", "RPG Maker MZ project path", ".")
+    .description("Show the public plugin dependency graph.")
+    .action(async (projectPath: string) => {
+      printJson(dependencyGraph(await inspectPluginProject(projectPath)));
+    });
+  const params = plugin
+    .command("params")
+    .description("Inspect and safely plan typed plugin parameter updates.");
+  params
+    .command("get")
+    .argument("<name>")
+    .argument("[projectPath]", "RPG Maker MZ project path", ".")
+    .description(
+      "Show a plugin's public parameter definitions and configured values."
+    )
+    .action(async (name: string, projectPath: string) => {
+      printJson(pluginParameters(await getPluginProfile(projectPath, name)));
+    });
+  params
+    .command("plan")
+    .argument("<name>")
+    .argument("[projectPath]", "RPG Maker MZ project path", ".")
+    .requiredOption(
+      "--values <json-or-@file>",
+      "typed partial parameter object"
+    )
+    .description(
+      "Encode a typed parameter patch, then create a guarded plugins.js change plan."
+    )
+    .action(
+      async (
+        name: string,
+        projectPath: string,
+        options: { values: string }
+      ) => {
+        const parameters = await encodePluginParameterPatch(
+          projectPath,
+          name,
+          await readJsonObject(options.values)
+        );
+        printJson(
+          await configurePluginPlan({
+            projectRoot: projectPath,
+            name,
+            parameters
+          })
+        );
+      }
+    );
+  const commands = plugin
+    .command("commands")
+    .description("Inspect and compile public plugin commands.");
+  commands
+    .command("list")
+    .argument("<name>")
+    .argument("[projectPath]", "RPG Maker MZ project path", ".")
+    .description("List a plugin's public command definitions.")
+    .action(async (name: string, projectPath: string) => {
+      printJson(pluginCommands(await getPluginProfile(projectPath, name)));
+    });
+  commands
+    .command("describe")
+    .argument("<name>")
+    .argument("<commandName>")
+    .argument("[projectPath]", "RPG Maker MZ project path", ".")
+    .description("Describe one public plugin command and its typed arguments.")
+    .action(async (name: string, commandName: string, projectPath: string) => {
+      const command = pluginCommands(
+        await getPluginProfile(projectPath, name)
+      ).find((entry) => commandNameOf(entry) === commandName);
+      if (!command)
+        throw new Error(
+          `Plugin command ${commandName} was not found for ${name}.`
+        );
+      printJson(command);
+    });
+  commands
+    .command("compile")
+    .argument("<name>")
+    .argument("<commandName>")
+    .argument("[projectPath]", "RPG Maker MZ project path", ".")
+    .requiredOption("--args <json-or-@file>", "typed command argument object")
+    .description(
+      "Validate and compile a plugin command to RPG Maker event code 357."
+    )
+    .action(
+      async (
+        name: string,
+        commandName: string,
+        projectPath: string,
+        options: { args: string }
+      ) => {
+        printJson(
+          await compilePluginCommand(
+            projectPath,
+            name,
+            commandName,
+            await readJsonObject(options.args)
+          )
+        );
+      }
+    );
+  const docs = plugin
+    .command("docs")
+    .description(
+      "Discover local and public documentation sources for a plugin."
+    );
+  docs
+    .command("discover")
+    .argument("<name>")
+    .argument("[projectPath]", "RPG Maker MZ project path", ".")
+    .description(
+      "Discover documentation sources declared by a plugin's public metadata."
+    )
+    .action(async (name: string, projectPath: string) => {
+      printJson(await discoverPluginDocumentation(projectPath, name));
+    });
   plugin
     .command("list")
     .argument("[projectPath]", "RPG Maker MZ project path", ".")
@@ -369,6 +530,78 @@ function registerPluginCommands(program: Command): void {
         );
       }
     );
+}
+
+function pluginParameters(profile: unknown): unknown {
+  const record = asRecord(profile);
+  return {
+    definitions: record.metadata && asRecord(record.metadata).parameters,
+    configured: record.decodedParameters ?? record.parameters,
+    raw: asRecord(record.configuration).parameters
+  };
+}
+
+function pluginCommands(profile: unknown): unknown[] {
+  const record = asRecord(profile);
+  const metadata = asRecord(record.metadata);
+  const commands = metadata.commands ?? record.commands;
+  return Array.isArray(commands) ? commands : [];
+}
+
+function commandNameOf(command: unknown): string | undefined {
+  const record = asRecord(command);
+  return typeof record.name === "string" ? record.name : undefined;
+}
+
+function dependencyGraph(report: unknown): unknown {
+  const reportRecord = asRecord(report);
+  if (reportRecord.dependencyGraph !== undefined)
+    return reportRecord.dependencyGraph;
+  const plugins = Array.isArray(reportRecord.profiles)
+    ? reportRecord.profiles
+    : [];
+  const nodes = plugins.map((plugin) => {
+    const record = asRecord(plugin);
+    return {
+      name: record.name,
+      enabled: record.enabled,
+      configured: record.configured,
+      position: record.position
+    };
+  });
+  const edges = plugins.flatMap((plugin) => {
+    const record = asRecord(plugin);
+    const metadata = asRecord(record.metadata);
+    const name = typeof record.name === "string" ? record.name : undefined;
+    if (!name) return [];
+    return [
+      ...dependencyEdges(metadata.bases, name, "base"),
+      ...dependencyEdges(metadata.orderAfter, name, "after"),
+      ...dependencyEdges(metadata.orderBefore, name, "before")
+    ];
+  });
+  return { nodes, edges };
+}
+
+function dependencyEdges(
+  values: unknown,
+  plugin: string,
+  relation: "base" | "after" | "before"
+): { from: string; to: string; relation: string }[] {
+  if (!Array.isArray(values)) return [];
+  return values
+    .filter((value): value is string => typeof value === "string")
+    .map((dependency) =>
+      relation === "before"
+        ? { from: plugin, to: dependency, relation }
+        : { from: dependency, to: plugin, relation }
+    );
+}
+
+function asRecord(value: unknown): Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : {};
 }
 
 function registerVisuStellaCommands(program: Command): void {

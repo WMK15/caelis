@@ -20,7 +20,7 @@ Avoid repeating broad scans when a current result is already available.
 - Use `$project-auditor` for project health, broken references, convention drift, and risk reports.
 - Use `$database-designer` for database records, switches, variables, Types, Terms, common events, and troop data.
 - Use `$event-designer` for map events, common-event command lists, troop battle events, and event AST compilation.
-- Handle installed RPG Maker plugins with `plugin_list` and `plugin_get`. Use the VisuStella-specific tools only for public metadata exposed by the installed plugin.
+- Use `$plugin-integrator` for unfamiliar installed RPG Maker plugins, updates, public command/parameter work, compatibility diagnosis, or any plugin workflow beyond a quick `plugin_list`/`plugin_get` lookup.
 
 ## Make guarded changes
 

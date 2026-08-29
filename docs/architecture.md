@@ -29,6 +29,8 @@ RPG Maker MZ playtest
 - `@caelis/guard`: change-set planning and validation boundary.
 - `@caelis/adapter-sdk`: plugin adapter contracts.
 - `@caelis/adapter-rmmz-native`: native RPG Maker MZ capabilities.
+- `@caelis/adapter-visustella`: VisuStella tier and compatibility overlay.
+- `@caelis/plugin-intelligence`: source-free, hash-keyed profiles derived from public MZ headers, safe literal observations, project usage, and documentation descriptors without executing plugin JavaScript.
 - `@caelis/bridge-protocol`: future runtime bridge message types.
 - `@caelis/testing`: fixture and temporary project helpers.
 - `@caelis/cli`: human CLI commands.
@@ -41,7 +43,7 @@ Project files are scanned read-only. JSON data is parsed through schemas where a
 
 ## MCP Architecture
 
-The MCP server keeps inspection, planning, and mutation separate. Read-only tools inspect the project, every database section, maps, events, system data, plugins, and Codex. Planning tools persist proposed database, system, multi-page map-event, and plugin changes without touching project data; `change_plan_get` retrieves a plan for review; `change_apply` is the only project-file mutating step and requires `confirm: true` plus a valid, non-stale plan. Multi-file plugin plans are backed up and rolled back as one operation.
+The MCP server keeps inspection, planning, and mutation separate. Read-only tools inspect the project, every database section, maps, events, system data, plugins, and Codex. Generic plugin intelligence inventories installed files recursively, hashes exact versions, parses public headers and typed structures, records bounded literal observations, scans project usage, and reports dependencies without evaluating plugin code. Planning tools persist proposed database, system, multi-page map-event, and plugin changes without touching project data; `change_plan_get` retrieves a plan for review; `change_apply` is the only project-file mutating step and requires `confirm: true` plus a valid, non-stale plan. Multi-file plugin plans are backed up and rolled back as one operation.
 
 ## Future Runtime Bridge
 

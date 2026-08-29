@@ -16,6 +16,30 @@ import {
 } from "./tools/change-plan-tools.js";
 import { getProjectScan } from "./tools/project-scan.js";
 import { getProjectSummary } from "./tools/project-summary.js";
+import {
+  pluginCommandCompileShape,
+  pluginCommandCompileTool,
+  pluginCommandDescribeShape,
+  pluginCommandDescribeTool,
+  pluginCommandListShape,
+  pluginCommandListTool,
+  pluginDependencyGraphShape,
+  pluginDependencyGraphTool,
+  pluginDocumentationSourcesShape,
+  pluginDocumentationSourcesTool,
+  pluginInspectShape,
+  pluginInspectTool,
+  pluginInventoryShape,
+  pluginInventoryTool,
+  pluginParameterGetShape,
+  pluginParameterGetTool,
+  pluginParameterUpdatePlanShape,
+  pluginParameterUpdatePlanTool,
+  pluginUsageScanShape,
+  pluginUsageScanTool,
+  pluginValidateShape,
+  pluginValidateTool
+} from "./tools/plugin-intelligence-tools.js";
 import { getValidationReport } from "./tools/validation-report.js";
 import {
   characterGeneratorLaunchShape,
@@ -354,6 +378,117 @@ export function createCaelisMcpServer(): McpServer {
       inputSchema: pluginCreatePlanShape
     },
     async (input) => toJsonToolResponse(await pluginCreatePlanTool(input))
+  );
+
+  server.registerTool(
+    "plugin_inventory",
+    {
+      description:
+        "Inventory installed and configured RPG Maker MZ plugins from public metadata without executing them.",
+      inputSchema: pluginInventoryShape
+    },
+    async (input) => toJsonToolResponse(await pluginInventoryTool(input))
+  );
+
+  server.registerTool(
+    "plugin_inspect",
+    {
+      description:
+        "Inspect one plugin's public header profile, configuration, parameters, commands, and dependencies without executing it.",
+      inputSchema: pluginInspectShape
+    },
+    async (input) => toJsonToolResponse(await pluginInspectTool(input))
+  );
+
+  server.registerTool(
+    "plugin_validate",
+    {
+      description:
+        "Validate generic plugin configuration and public dependency ordering without executing plugin JavaScript.",
+      inputSchema: pluginValidateShape
+    },
+    async (input) => toJsonToolResponse(await pluginValidateTool(input))
+  );
+
+  server.registerTool(
+    "plugin_usage_scan",
+    {
+      description:
+        "Scan RPG Maker MZ project event data for generic plugin command usage.",
+      inputSchema: pluginUsageScanShape
+    },
+    async (input) => toJsonToolResponse(await pluginUsageScanTool(input))
+  );
+
+  server.registerTool(
+    "plugin_dependency_graph",
+    {
+      description:
+        "Return a generic plugin dependency graph derived from public base and ordering metadata.",
+      inputSchema: pluginDependencyGraphShape
+    },
+    async (input) => toJsonToolResponse(await pluginDependencyGraphTool(input))
+  );
+
+  server.registerTool(
+    "plugin_parameter_get",
+    {
+      description:
+        "Get public parameter definitions plus decoded and raw configured values for one plugin.",
+      inputSchema: pluginParameterGetShape
+    },
+    async (input) => toJsonToolResponse(await pluginParameterGetTool(input))
+  );
+
+  server.registerTool(
+    "plugin_parameter_update_plan",
+    {
+      description:
+        "Validate and encode a generic typed plugin parameter patch, then create a guarded plugins.js change plan.",
+      inputSchema: pluginParameterUpdatePlanShape
+    },
+    async (input) =>
+      toJsonToolResponse(await pluginParameterUpdatePlanTool(input))
+  );
+
+  server.registerTool(
+    "plugin_command_list",
+    {
+      description: "List a plugin's public command definitions.",
+      inputSchema: pluginCommandListShape
+    },
+    async (input) => toJsonToolResponse(await pluginCommandListTool(input))
+  );
+
+  server.registerTool(
+    "plugin_command_describe",
+    {
+      description:
+        "Describe one public plugin command and its typed arguments.",
+      inputSchema: pluginCommandDescribeShape
+    },
+    async (input) => toJsonToolResponse(await pluginCommandDescribeTool(input))
+  );
+
+  server.registerTool(
+    "plugin_command_compile",
+    {
+      description:
+        "Validate typed public command arguments and compile RPG Maker MZ event command code 357.",
+      inputSchema: pluginCommandCompileShape
+    },
+    async (input) => toJsonToolResponse(await pluginCommandCompileTool(input))
+  );
+
+  server.registerTool(
+    "plugin_documentation_sources",
+    {
+      description:
+        "Discover local and public documentation sources declared by a plugin's public metadata.",
+      inputSchema: pluginDocumentationSourcesShape
+    },
+    async (input) =>
+      toJsonToolResponse(await pluginDocumentationSourcesTool(input))
   );
 
   server.registerTool(

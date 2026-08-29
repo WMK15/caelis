@@ -26,6 +26,7 @@
     "@caelis/adapter-visustella": "workspace:*",
     "@caelis/codex": "workspace:*",
     "@caelis/events": "workspace:*",
+    "@caelis/plugin-intelligence": "workspace:*",
     "@caelis/project-index": "workspace:*",
     "@caelis/project-write": "workspace:*",
     "@modelcontextprotocol/sdk": "^1.21.0",

@@ -63,6 +63,7 @@ packages/guard           Change-set planning and validation
 packages/adapter-sdk     Plugin adapter interfaces
 packages/adapter-rmmz-native Native RPG Maker MZ adapter
 packages/adapter-visustella VisuStella metadata, typing, and load-order adapter
+packages/plugin-intelligence Vendor-neutral installed-plugin profiles and validation
 packages/bridge-protocol Runtime bridge message types
 packages/testing         Fixture and temporary project helpers
 packages/shared          Shared utilities
@@ -174,7 +175,11 @@ Inspection tools:
 - `database_list`, `database_get`
 - `system_get`
 - `map_get`, `map_event_get`
-- `plugin_list`, `plugin_get`
+- `plugin_inventory`, `plugin_inspect`, `plugin_validate`
+- `plugin_usage_scan`, `plugin_dependency_graph`
+- `plugin_parameter_get`, `plugin_command_list`, `plugin_command_describe`
+- `plugin_documentation_sources`
+- `plugin_list`, `plugin_get` (legacy compact inspection)
 - `visustella_status`, `visustella_plugin_get`
 - `character_generator_status`
 
@@ -185,6 +190,7 @@ Plan/apply tools:
 - `system_update_plan`, `map_event_upsert_plan`
 - `event_compile`
 - `plugin_configure_plan`, `plugin_create_plan`
+- `plugin_parameter_update_plan`, `plugin_command_compile`
 - `visustella_parameter_update_plan`, `visustella_command_compile`
 - `character_generator_launch`
 - `change_plan_get`: reads a persisted plan for review.

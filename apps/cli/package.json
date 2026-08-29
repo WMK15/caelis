@@ -30,6 +30,7 @@
     "@caelis/codex": "workspace:*",
     "@caelis/config": "workspace:*",
     "@caelis/events": "workspace:*",
+    "@caelis/plugin-intelligence": "workspace:*",
     "@caelis/project-index": "workspace:*",
     "@caelis/project-write": "workspace:*",
     "@caelis/shared": "workspace:*",
